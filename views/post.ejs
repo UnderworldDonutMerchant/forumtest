@@ -1,0 +1,36 @@
+<%- include('partials/header'); -%>
+
+<div class="card">
+    <div class="card-header">
+      Posted by <%=username%>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title"><%=title%></h5>
+      <p class="card-text"><%=body%></p>
+      <p>Comment: <%=commentNumber%> Time: <%=time%></p>
+    </div>
+</div>
+
+<div class ="comment">
+<form class="" method="post" action="<%=parameter%>>">
+    <div class="form-group">
+        <label>Comment</label>
+        <textarea class="form-control" name="commentBody" rows="3" cols="30"></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit" name="button">Publish</button>
+</form>
+</div>
+
+<% for (let x in comment) { %>
+    <div class="card">
+        <div class="card-header">
+          Posted by <%=comment[x].user%>
+        </div>
+        <div class="card-body">
+          <p class="card-text"><%=comment[x].body%></p>
+          <p>Time: <%=comment[x].time%></p>
+        </div>
+    </div>
+<% } %>
+
+<%- include('partials/footer'); -%>

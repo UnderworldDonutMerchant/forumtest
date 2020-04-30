@@ -1,0 +1,17 @@
+<%- include('partials/header'); -%>
+
+<div class="jumbotron">
+    <h1 class="display-4">Check out what's in vogue</h1>
+    <hr class="my-4">
+    <p class="lead"> Keep up to date with the latest topics of discussion!
+    </p>
+</div>
+
+
+<% for (let x in post) { %>
+    <h2><%= post[x].title %></h2>
+    <p><%= post[x].body %>
+    <a href="/post/<%=post[x].title%>">Read More</a></p>
+<% } %>
+
+<%- include('partials/footer'); -%>
