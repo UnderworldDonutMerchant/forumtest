@@ -7,11 +7,30 @@
     </p>
 </div>
 
+<form class="formmargin" method="post" action="/">
+    <div class="form-group">
+        <label>Topic</label>
+        <input class="form-control" type="text" name="topicTitle">
+        <label>Description</label>
+        <textarea class="form-control" name="topicDes" rows="2" cols="30"></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit" name="button">Publish</button>
+</form>
 
-<% for (let x in post) { %>
-    <h2><%= post[x].title %></h2>
-    <p><%= post[x].body %>
-    <a href="/post/<%=post[x].title%>">Read More</a></p>
-<% } %>
+
+<div class="list-group">
+    <% for (let x in data) { %>
+    <a href="/<%=data[x].topic%>" class="list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1"> <%= data[x].topic %> </h5>
+        <small>Views: <%= data[x].views %> </small>  
+        <small>Posts: <%= data[x].postNumber %> </small>
+      </div>
+      <p class="mb-1"> <%= data[x].description %></p>
+    </a>
+    <% } %>
+</div>
+
+
 
 <%- include('partials/footer'); -%>

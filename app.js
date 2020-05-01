@@ -1,7 +1,9 @@
+//set-up of server
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const lodash = require("lodash");
+const data = require(__dirname + "/data.js");
 
 const app = express();
 
@@ -12,64 +14,74 @@ app.use(express.static("public"));
 
 const PORT = process.env.PORT || 3000;
 
-let posts = [];
+//server
+let dataStructure = data.dataConstruct();//data structure
 
-app.get('/', (req, res) => {
-    res.render('home', {post: posts});
+// MAIN PAGE
+
+app.get('/', (req, res) => { //main page
+    res.render('home', {data: dataStructure});
 })
 
-app.get("/compose", (req, res) => {
-    res.render("compose");
-})
-
-app.post("/compose", (req, res) => {
-    let now = new Date();
-    const post = {
-      title: req.body.postTitle,
-      body: lodash.truncate(req.body.postBody, {'length': 100}),
-      fullbody: req.body.postBody,
-      username: "Anonymous",
-      time: now,
-      commentNumber: 0,
-      comment: []
-    }
-    posts.push(post);
+app.post('/', (req, res) => {
+    let topic = req.body.topicTitle;
+    let descript = req.body.topicDes;
+    data.postTopic(dataStructure, topic, descript);
     res.redirect("/");
 })
 
-app.get('/post/:entry', (req, res) => {
-    for (let x in posts) {
-      if (lodash.lowerCase(req.params.entry) == lodash.lowerCase(posts[x].title)) {
-        res.render("post", {
-            title: posts[x].title,
-            body: posts[x].fullbody,
-            username: posts[x].username,
-            time: posts[x].time,
-            commentNumber: posts[x].commentNumber,
-            comment: posts[x].comment,
-            parameter: req.url});
+//TOPIC
+
+app.get('/:topic', (req, res) => { //load topic page
+    for (let x in dataStructure) {
+      if (lodash.lowerCase(req.params.topic) == lodash.lowerCase(dataStructure[x].topic)) { //if title of post= url parameter
+        dataStructure[x].views++;
+        res.render("topic", data.renderTopicData(dataStructure, x, req.url));
       }
     }
 })
 
-app.post('/post/:entry', (req, res) => {
-    for (let x in posts) {
-        if (lodash.lowerCase(req.params.entry) == lodash.lowerCase(posts[x].title)) {
-            let now = new Date();
-            const comment = {
-                user: "Anonymous",
-                body: req.body.commentBody,
-                time: now,
-                reply: []
+app.post('/:topic', (req, res) => { //insert data through topic page
+    for (let x in dataStructure) {
+      if (lodash.lowerCase(req.params.topic) == lodash.lowerCase(dataStructure[x].topic)) { //if title of post= url parameter
+        let title = req.body.postTitle;
+        let body = req.body.postBody;
+        data.postData(dataStructure[x].posts, title, body);
+        dataStructure[x].postNumber += 1;
+        res.redirect(req.url);
+      }
+    }
+})
+
+//POSTS
+
+app.get('/:topic/posts/:post', (req, res) => {//load posts page of topic
+    for (let x in dataStructure) {
+        for (let y in dataStructure[x].posts) {
+            if (lodash.lowerCase(req.params.post) == lodash.lowerCase((dataStructure[x].posts)[y].title)) {
+                (dataStructure[x].posts)[y].views++;
+                res.render("post", data.renderPostData(dataStructure[x].posts, y, req.url));
             }
-            posts[x].comment.push(comment);
-            console.log(posts[x].comment);
-            res.redirect(req.url);
         }
     }
 })
 
+app.post('/:topic/posts/:post', (req, res) => {//insert data through post page
+    for (let x in dataStructure) {
+        for (let y in dataStructure[x].posts) {
+            if (lodash.lowerCase(req.params.post) == lodash.lowerCase((dataStructure[x].posts)[y].title)) {
+                let comment = req.body.commentBody;
+                data.commentData(dataStructure[x].posts, y, comment);
+                (dataStructure[x].posts)[y].commentNumber += 1;
+                res.redirect(req.url);
+            }
+        }
+    }
+})
 
-app.listen(PORT, () => {
+//LISTEN
+
+app.listen(PORT, () => { //listen for the server
     console.log(`Server is running on port ${PORT}`);
 })
+

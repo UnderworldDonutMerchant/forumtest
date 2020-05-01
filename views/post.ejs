@@ -7,7 +7,7 @@
     <div class="card-body">
       <h5 class="card-title"><%=title%></h5>
       <p class="card-text"><%=body%></p>
-      <p>Comment: <%=commentNumber%> Time: <%=time%></p>
+      <p>Comment: <%=commentNumber%> Views: <%=views%> Time: <%=time%></p>
     </div>
 </div>
 
@@ -21,6 +21,8 @@
 </form>
 </div>
 
+<% let myFunction = () => {console.log(shit)} %>
+
 <% for (let x in comment) { %>
     <div class="card">
         <div class="card-header">
@@ -29,8 +31,12 @@
         <div class="card-body">
           <p class="card-text"><%=comment[x].body%></p>
           <p>Time: <%=comment[x].time%></p>
+          <button class="btn btn-primary reply" type="submit" name="button" > Reply </button>
         </div>
     </div>
 <% } %>
+
+
+
 
 <%- include('partials/footer'); -%>
